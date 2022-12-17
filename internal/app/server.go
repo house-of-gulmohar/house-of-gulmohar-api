@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"house-of-gulmohar/internal/data"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,11 +28,18 @@ type Config struct {
 // Server is the top level recruitment server application object.
 type Server struct {
 	*Config
+
+	ProductRepo  data.ProductRepo
+	CategoryRepo data.CategoryRepo
+	BrandRepo    data.BrandRepo
 }
 
 func NewServer(c *Config) *Server {
 	s := &Server{
-		Config: c,
+		Config:       c,
+		ProductRepo:  &data.ProductDb{Db: c.Db},
+		CategoryRepo: &data.CategoryDb{Db: c.Db},
+		BrandRepo:    &data.BrandDb{Db: c.Db},
 	}
 	return s
 }
