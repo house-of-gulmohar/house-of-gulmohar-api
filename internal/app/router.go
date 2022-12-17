@@ -1,6 +1,7 @@
 package app
 
 import (
+	"house-of-gulmohar/internal/e"
 	"house-of-gulmohar/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
@@ -20,5 +21,10 @@ func (s *Server) InitRouter() *chi.Mux {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
+	r.Route("/api/v1", func(r chi.Router) {
+		r.Route("/products", func(r chi.Router) {
+			r.Get("/", e.HandleException(s.getAllProducts))
+		})
+	})
 	return r
 }

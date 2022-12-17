@@ -7,15 +7,24 @@ import (
 	"net/http"
 )
 
-type HandleException func(w http.ResponseWriter, r *http.Request) *model.Response
+type ExeptionHandler func(w http.ResponseWriter, r *http.Request) *model.ErrorResponse
 
-func (he HandleException) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	err := he(w, r)
+func (eh ExeptionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	err := eh(w, r)
 	if err != nil {
 		res := dto.ResponseDto{}
 		res.Data = err.Data
 		res.Message = err.Message
+		if err.Code == 0 {
+			err.Code = http.StatusOK
+		}
 		w.WriteHeader(err.Code)
 		json.NewEncoder(w).Encode(res)
 	}
+}
+
+func HandleException(eh ExeptionHandler) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		eh.ServeHTTP(w, r)
+	})
 }
