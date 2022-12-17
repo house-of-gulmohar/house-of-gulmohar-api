@@ -1,0 +1,8 @@
+ALTER TABLE product
+RENAME COLUMN features to featured;
+
+
+ALTER TABLE product
+ALTER COLUMN mrp TYPE FLOAT(3),
+ALTER COLUMN price TYPE FLOAT(3),
+ALTER COLUMN discount TYPE FLOAT(3);

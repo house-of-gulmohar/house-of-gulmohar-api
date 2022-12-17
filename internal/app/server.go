@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"database/sql"
 	"house-of-gulmohar/internal/data"
 	"net/http"
 	"os"
@@ -22,7 +23,8 @@ type Config struct {
 	Version   string
 	Port      string
 	PgConnStr string
-	Db        *pgxpool.Pool
+	Db        *sql.DB
+	Pool      *pgxpool.Pool
 }
 
 // Server is the top level recruitment server application object.
@@ -37,9 +39,9 @@ type Server struct {
 func NewServer(c *Config) *Server {
 	s := &Server{
 		Config:       c,
-		ProductRepo:  &data.ProductDb{Db: c.Db},
-		CategoryRepo: &data.CategoryDb{Db: c.Db},
-		BrandRepo:    &data.BrandDb{Db: c.Db},
+		ProductRepo:  &data.ProductDb{Pool: c.Pool},
+		CategoryRepo: &data.CategoryDb{Pool: c.Pool},
+		BrandRepo:    &data.BrandDb{Pool: c.Pool},
 	}
 	return s
 }

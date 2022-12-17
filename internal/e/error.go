@@ -12,11 +12,12 @@ type ExeptionHandler func(w http.ResponseWriter, r *http.Request) *model.ErrorRe
 func (eh ExeptionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err := eh(w, r)
 	if err != nil {
-		res := dto.ResponseDto{}
+		res := dto.ErrorResponseDto{}
 		res.Data = err.Data
 		res.Message = err.Message
+		res.Detail = err.Detail
 		if err.Code == 0 {
-			err.Code = http.StatusOK
+			err.Code = http.StatusBadRequest
 		}
 		w.WriteHeader(err.Code)
 		json.NewEncoder(w).Encode(res)

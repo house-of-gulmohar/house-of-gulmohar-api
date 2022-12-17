@@ -1,25 +1,28 @@
 package model
 
-import "database/sql"
+import (
+	"house-of-gulmohar/internal/utils"
+	"time"
+)
 
 type Product struct {
 	Id                string
 	Name              string
-	Description       sql.NullString
-	Quantity          string
+	Description       utils.NullString
+	Quantity          int64
 	Available         bool
 	Featured          bool
 	MRP               float64
 	Price             float64
-	OnSale            sql.NullBool
+	OnSale            bool
 	Discount          float64
 	Brand             string
 	Category          string
 	Images            []string
-	ReplacementPeriod float64
+	ReplacementPeriod int64
 	ReplacementType   string
-	WarrantyPeriod    float64
+	WarrantyPeriod    int64
 	WarrantyType      string
-	CreatedAt         string
-	UpdatedAt         string
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }
