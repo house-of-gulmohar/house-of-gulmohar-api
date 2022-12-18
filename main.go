@@ -11,7 +11,7 @@ func main() {
 	}
 	c.Port = app.GetPort()
 	c.PgConnStr = app.GetPgConfig()
-	c.Db = app.PrepareDB(&c)
+	c.Pool = app.PrepareDBPool(&c)
 
 	s := app.NewServer(&c)
 	s.Start()

@@ -47,7 +47,7 @@ func GetPgConfig() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s", pg.User, pg.Password, pg.Host, pg.Port, pg.Database)
 }
 
-func PrepareDB(c *Config) *pgxpool.Pool {
+func PrepareDBPool(c *Config) *pgxpool.Pool {
 	dbPool, err := pgxpool.Connect(context.Background(), c.PgConnStr)
 	if err != nil {
 		logrus.Warnf("Unable to connect to database: %v\n", err)

@@ -2,17 +2,18 @@ package app
 
 import (
 	"house-of-gulmohar/internal/e"
-	"house-of-gulmohar/internal/middleware"
+	cm "house-of-gulmohar/internal/middleware"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
 func (s *Server) InitRouter() *chi.Mux {
 	r := chi.NewRouter()
 	// TODO: create custom request logger
-	// r.Use(middleware.Logger)
-	r.Use(middleware.HeaderMiddleware)
+	r.Use(middleware.Logger)
+	r.Use(cm.HeaderMiddleware)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -23,7 +24,7 @@ func (s *Server) InitRouter() *chi.Mux {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/products", func(r chi.Router) {
-			r.Get("/", e.HandleException(s.getAllProducts))
+			r.Get("/", e.HandleException(s.Product.handleGetAllProducts))
 		})
 	})
 	return r

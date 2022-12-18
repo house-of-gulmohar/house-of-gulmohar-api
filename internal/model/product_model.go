@@ -1,25 +1,28 @@
 package model
 
-import "database/sql"
+import (
+	"house-of-gulmohar/internal/utils"
+	"time"
+)
 
 type Product struct {
-	Id                string
-	Name              string
-	Description       sql.NullString
-	Quantity          string
-	Available         bool
-	Featured          bool
-	MRP               float64
-	Price             float64
-	OnSale            sql.NullBool
-	Discount          float64
-	Brand             string
-	Category          string
-	Images            []string
-	ReplacementPeriod float64
-	ReplacementType   string
-	WarrantyPeriod    float64
-	WarrantyType      string
-	CreatedAt         string
-	UpdatedAt         string
+	Id                string           `json:"id"`
+	Name              string           `json:"name"`
+	Description       utils.NullString `json:"description"`
+	Quantity          int64            `json:"quantity"`
+	Active            bool             `json:"-"`
+	Featured          bool             `json:"featured"`
+	MRP               float64          `json:"mrp"`
+	Price             float64          `json:"price"`
+	OnSale            bool             `json:"on_sale"`
+	Discount          float64          `json:"discount"`
+	Brand             string           `json:"brand"`
+	Category          string           `json:"category"`
+	Images            []string         `json:"images"`
+	ReplacementPeriod int64            `json:"replacement_period"`
+	ReplacementType   string           `json:"replacement_type"`
+	WarrantyPeriod    int64            `json:"warranty_period"`
+	WarrantyType      string           `json:"warranty_type"`
+	CreatedAt         time.Time        `json:"created_at"`
+	UpdatedAt         time.Time        `json:"updated_at"`
 }

@@ -1,17 +1,22 @@
 package data
 
 import (
+	"database/sql"
+
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type ProductDb struct {
-	Db *pgxpool.Pool
+	Pool *pgxpool.Pool
+	Db   *sql.DB
 }
 
 type CategoryDb struct {
-	Db *pgxpool.Pool
+	Pool *pgxpool.Pool
+	Db   *sql.DB
 }
 
 type BrandDb struct {
-	Db *pgxpool.Pool
+	Pool *pgxpool.Pool
+	Db   *sql.DB
 }
