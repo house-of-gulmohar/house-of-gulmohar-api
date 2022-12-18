@@ -56,7 +56,7 @@ func (c *CategoryHandler) handleGetCategory(w http.ResponseWriter, req *http.Req
 	if err := utils.ValidateUUID(id); err != nil {
 		return e.ErrorInvalidPathParam("id")
 	}
-	product, err := c.CategoryRepo.GetCategory(ctx, id)
+	category, err := c.CategoryRepo.GetCategory(ctx, id)
 	if err == pgx.ErrNoRows {
 		return e.NotFound("category not found")
 	}
@@ -66,7 +66,7 @@ func (c *CategoryHandler) handleGetCategory(w http.ResponseWriter, req *http.Req
 	res := model.Response{
 		Code:    http.StatusOK,
 		Message: "category collected successfully",
-		Data:    product,
+		Data:    category,
 	}
 	w.WriteHeader(res.Code)
 	json.NewEncoder(w).Encode(res.Send())
