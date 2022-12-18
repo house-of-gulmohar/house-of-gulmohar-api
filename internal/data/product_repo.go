@@ -4,10 +4,13 @@ import (
 	"context"
 	"house-of-gulmohar/internal/data/query"
 	"house-of-gulmohar/internal/model/dto"
+
+	"github.com/sirupsen/logrus"
 )
 
 type ProductRepo interface {
 	GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error)
+	GetProduct(ctx context.Context, id string) (*dto.ProductDto, error)
 }
 
 func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error) {
@@ -53,4 +56,43 @@ func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) (
 		products = append(products, product)
 	}
 	return products, len(products), nil
+}
+
+func (p *ProductDb) GetProduct(ctx context.Context, id string) (*dto.ProductDto, error) {
+	defer ctx.Done()
+	product := dto.ProductDto{}
+	sql, err := query.GetProductQuery(id)
+	if err != nil {
+		return nil, err
+	}
+	row := p.Pool.QueryRow(context.Background(), sql, id)
+	err = row.Scan(
+		&product.Id,
+		&product.Name,
+		&product.Description,
+		&product.MRP,
+		&product.Price,
+		&product.OnSale,
+		&product.Discount,
+		&product.Images,
+		&product.ReplacementPeriod,
+		&product.ReplacementType,
+		&product.WarrantyPeriod,
+		&product.WarrantyType,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+		&product.Quantity,
+		&product.Featured,
+		&product.Brand.Id,
+		&product.Brand.Name,
+		&product.Brand.ImageUrl,
+		&product.Category.Id,
+		&product.Category.Name,
+		&product.Category.ImageUrl,
+	)
+	if err != nil {
+		logrus.Error(err)
+		return nil, err
+	}
+	return &product, nil
 }

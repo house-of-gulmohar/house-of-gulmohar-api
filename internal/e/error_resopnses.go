@@ -13,10 +13,24 @@ func ErrorMissingQueryParam(p string) *model.ErrorResponse {
 	}
 }
 
+func ErrorInvalidQueryParam(p string) *model.ErrorResponse {
+	return &model.ErrorResponse{
+		Code:    http.StatusBadRequest,
+		Message: fmt.Sprintf("missing %s in query", p),
+	}
+}
+
 func ErrorMissingPathParam(p string) *model.ErrorResponse {
 	return &model.ErrorResponse{
 		Code:    http.StatusBadRequest,
 		Message: fmt.Sprintf("missing %s in path", p),
+	}
+}
+
+func ErrorInvalidPathParam(p string) *model.ErrorResponse {
+	return &model.ErrorResponse{
+		Code:    http.StatusBadRequest,
+		Message: fmt.Sprintf("invalid %s in path", p),
 	}
 }
 
@@ -44,7 +58,7 @@ func InternalServerError(d string) *model.ErrorResponse {
 
 func NotFound(m string) *model.ErrorResponse {
 	return &model.ErrorResponse{
-		Code:    http.StatusInternalServerError,
+		Code:    http.StatusNotFound,
 		Message: m,
 	}
 }
