@@ -2,9 +2,9 @@ package data
 
 import (
 	"context"
-	"house-of-gulmohar/internal/data/query"
 	"house-of-gulmohar/internal/model/dto"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,12 +17,13 @@ type ProductRepo interface {
 func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error) {
 	defer ctx.Done()
 	products := []dto.ProductDto{}
-	sql, err := query.GetAllProductsQuery(limit, offset)
+	sql, err := p.Query.GetAllProductsQuery(limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
 	rows, err := p.Pool.Query(ctx, sql)
 	if err != nil {
+		logrus.Error(err)
 		return nil, 0, err
 	}
 	for rows.Next() {
@@ -52,6 +53,7 @@ func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) (
 			&product.Category.ImageUrl,
 		)
 		if err != nil {
+			logrus.Error(err)
 			return nil, 0, err
 		}
 		products = append(products, product)
@@ -62,7 +64,7 @@ func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) (
 func (p *ProductDb) GetProduct(ctx context.Context, id string) (*dto.ProductDto, error) {
 	defer ctx.Done()
 	product := dto.ProductDto{}
-	sql, err := query.GetProductQuery(id)
+	sql, err := p.Query.GetProductQuery(id)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +94,9 @@ func (p *ProductDb) GetProduct(ctx context.Context, id string) (*dto.ProductDto,
 		&product.Category.ImageUrl,
 	)
 	if err != nil {
-		logrus.Error(err)
+		if err != pgx.ErrNoRows {
+			logrus.Error(err)
+		}
 		return nil, err
 	}
 	return &product, nil
@@ -101,7 +105,7 @@ func (p *ProductDb) GetProduct(ctx context.Context, id string) (*dto.ProductDto,
 func (p *ProductDb) GetAllProductsByCategory(ctx context.Context, categoryId string, limit int, offset int) ([]dto.ProductDto, int, error) {
 	defer ctx.Done()
 	products := []dto.ProductDto{}
-	sql, err := query.GetAllProductsByCategoryQuery(categoryId, limit, offset)
+	sql, err := p.Query.GetAllProductsByCategoryQuery(categoryId, limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
