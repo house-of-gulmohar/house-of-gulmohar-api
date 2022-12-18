@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"house-of-gulmohar/internal/data"
+	"house-of-gulmohar/internal/data/query"
 	"net/http"
 	"os"
 	"os/signal"
@@ -39,10 +40,10 @@ func NewServer(c *Config) *Server {
 		Config: c,
 
 		Product: ProductHandler{
-			ProductRepo: &data.ProductDb{Pool: c.Pool},
+			ProductRepo: &data.ProductDb{Pool: c.Pool, Query: query.ProductQuery{}},
 		},
 		Category: CategoryHandler{
-			CategoryRepo: &data.CategoryDb{Pool: c.Pool},
+			CategoryRepo: &data.CategoryDb{Pool: c.Pool, Query: query.CategoryQuery{}},
 		},
 	}
 	return s

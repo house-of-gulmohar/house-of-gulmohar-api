@@ -5,7 +5,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func GetAllProductsQuery(limit int, offset int) (string, error) {
+type ProductQuery struct{}
+
+func (p *ProductQuery) GetAllProductsQuery(limit int, offset int) (string, error) {
 	psql := squirrel.
 		Select(
 			"p.id",
@@ -51,7 +53,7 @@ func GetAllProductsQuery(limit int, offset int) (string, error) {
 	return query, nil
 }
 
-func GetProductQuery(id string) (string, error) {
+func (p *ProductQuery) GetProductQuery(id string) (string, error) {
 	psql := squirrel.Select(
 		"p.id",
 		"p.name",
@@ -90,7 +92,7 @@ func GetProductQuery(id string) (string, error) {
 	return query, nil
 }
 
-func GetAllProductsByCategoryQuery(id string, limit int, offset int) (string, error) {
+func (p *ProductQuery) GetAllProductsByCategoryQuery(id string, limit int, offset int) (string, error) {
 	psql := squirrel.
 		Select(
 			"p.id",
