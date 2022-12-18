@@ -2,71 +2,35 @@ package data
 
 import (
 	"context"
-	"house-of-gulmohar/internal/constants"
-	"house-of-gulmohar/internal/model"
-
-	sq "github.com/Masterminds/squirrel"
+	"house-of-gulmohar/internal/data/query"
+	"house-of-gulmohar/internal/model/dto"
 )
 
 type ProductRepo interface {
-	GetAllProducts(ctx context.Context, limit int, offset int) ([]model.Product, int, error)
+	GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error)
 }
 
-func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) ([]model.Product, int, error) {
+func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error) {
 	defer ctx.Done()
-	products := []model.Product{}
-	qb := sq.Select(
-		"product.id",
-		"product.name",
-		"product.description",
-		"product.available",
-		"product.mrp",
-		"product.price",
-		"product.on_sale",
-		"product.discount",
-		"product.brand",
-		"product.category",
-		"product.images",
-		"product.replacement_period",
-		"product.replacement_type",
-		"product.warranty_period",
-		"product.warranty_type",
-		"product.created_at",
-		"product.updated_at",
-		"product.quantity",
-		"product.featured",
-	).
-		From(constants.TABLES["PRODUCT"])
-	if limit > 0 {
-		qb.
-			Limit(uint64(limit))
-	}
-	if offset > 0 {
-		qb.Offset(uint64(offset))
-	}
-
-	sql, _, err := qb.ToSql()
+	products := []dto.ProductDto{}
+	sql, err := query.GetAllProductsQuery(limit, offset)
 	if err != nil {
 		return nil, 0, err
 	}
-
 	rows, err := p.Pool.Query(ctx, sql)
 	if err != nil {
 		return nil, 0, err
 	}
 	for rows.Next() {
-		product := model.Product{}
+		product := dto.ProductDto{}
 		err = rows.Scan(
 			&product.Id,
 			&product.Name,
 			&product.Description,
-			&product.Available,
 			&product.MRP,
 			&product.Price,
 			&product.OnSale,
 			&product.Discount,
-			&product.Brand,
-			&product.Category,
 			&product.Images,
 			&product.ReplacementPeriod,
 			&product.ReplacementType,
@@ -76,6 +40,12 @@ func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) (
 			&product.UpdatedAt,
 			&product.Quantity,
 			&product.Featured,
+			&product.Brand.Id,
+			&product.Brand.Name,
+			&product.Brand.ImageUrl,
+			&product.Category.Id,
+			&product.Category.Name,
+			&product.Category.ImageUrl,
 		)
 		if err != nil {
 			return nil, 0, err

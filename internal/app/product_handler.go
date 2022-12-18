@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"house-of-gulmohar/internal/data"
 	"house-of-gulmohar/internal/e"
 	"house-of-gulmohar/internal/model"
 	"net/http"
@@ -10,7 +11,11 @@ import (
 	"time"
 )
 
-func (s *Server) handleGetAllProducts(w http.ResponseWriter, req *http.Request) *model.ErrorResponse {
+type ProductHandler struct {
+	ProductRepo data.ProductRepo
+}
+
+func (p *ProductHandler) handleGetAllProducts(w http.ResponseWriter, req *http.Request) *model.ErrorResponse {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	limit, err := strconv.Atoi(req.URL.Query().Get("limit"))
@@ -21,7 +26,7 @@ func (s *Server) handleGetAllProducts(w http.ResponseWriter, req *http.Request) 
 	if err != nil {
 		offset = 0
 	}
-	products, count, err := s.ProductRepo.GetAllProducts(ctx, limit, offset)
+	products, count, err := p.ProductRepo.GetAllProducts(ctx, limit, offset)
 	if err != nil {
 		return e.InternalServerError(err.Error())
 	}
@@ -31,6 +36,7 @@ func (s *Server) handleGetAllProducts(w http.ResponseWriter, req *http.Request) 
 		Data:    products,
 		Count:   count,
 	}
+
 	w.WriteHeader(res.Code)
 	json.NewEncoder(w).Encode(res.Send())
 	return nil

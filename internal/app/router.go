@@ -24,7 +24,7 @@ func (s *Server) InitRouter() *chi.Mux {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/products", func(r chi.Router) {
-			r.Get("/", e.HandleException(s.handleGetAllProducts))
+			r.Get("/", e.HandleException(s.Product.handleGetAllProducts))
 		})
 	})
 	return r

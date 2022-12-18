@@ -30,18 +30,20 @@ type Config struct {
 // Server is the top level recruitment server application object.
 type Server struct {
 	*Config
-
-	ProductRepo  data.ProductRepo
-	CategoryRepo data.CategoryRepo
-	BrandRepo    data.BrandRepo
+	Product  ProductHandler
+	Category CategoryHandler
 }
 
 func NewServer(c *Config) *Server {
 	s := &Server{
-		Config:       c,
-		ProductRepo:  &data.ProductDb{Pool: c.Pool},
-		CategoryRepo: &data.CategoryDb{Pool: c.Pool},
-		BrandRepo:    &data.BrandDb{Pool: c.Pool},
+		Config: c,
+
+		Product: ProductHandler{
+			ProductRepo: &data.ProductDb{Pool: c.Pool},
+		},
+		Category: CategoryHandler{
+			CategoryRepo: &data.CategoryDb{Pool: c.Pool},
+		},
 	}
 	return s
 }
