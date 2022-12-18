@@ -2,7 +2,7 @@ package dto
 
 type ResponseDto struct {
 	Message string      `json:"msg"`
-	Count   int         `json:"count"`
+	Count   int         `json:"count,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 }
 

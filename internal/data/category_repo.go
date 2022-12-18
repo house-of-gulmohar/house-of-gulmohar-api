@@ -4,11 +4,13 @@ import (
 	"context"
 	"house-of-gulmohar/internal/model/dto"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/sirupsen/logrus"
 )
 
 type CategoryRepo interface {
 	GetAllCategories(ctx context.Context, limit int, offset int) ([]dto.CategoryDto, int, error)
+	GetCategory(ctx context.Context, id string) (*dto.CategoryDto, error)
 }
 
 func (c *CategoryDb) GetAllCategories(ctx context.Context, limit int, offset int) ([]dto.CategoryDto, int, error) {
@@ -40,4 +42,29 @@ func (c *CategoryDb) GetAllCategories(ctx context.Context, limit int, offset int
 		categories = append(categories, category)
 	}
 	return categories, len(categories), nil
+}
+
+func (c *CategoryDb) GetCategory(ctx context.Context, id string) (*dto.CategoryDto, error) {
+	defer ctx.Done()
+	category := dto.CategoryDto{}
+	sql, err := c.Query.GetCategoryQuery(id)
+	if err != nil {
+		return nil, err
+	}
+	row := c.Pool.QueryRow(context.Background(), sql, id)
+	err = row.Scan(
+		&category.Id,
+		&category.Name,
+		&category.Description,
+		&category.ImageUrl,
+		&category.CreatedAt,
+		&category.UpdatedAt,
+	)
+	if err != nil {
+		if err != pgx.ErrNoRows {
+			logrus.Error(err)
+		}
+		return nil, err
+	}
+	return &category, nil
 }
