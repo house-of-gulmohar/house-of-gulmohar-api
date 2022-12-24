@@ -1,14 +1,14 @@
 package dto
 
 import (
-	"house-of-gulmohar/internal/utils"
+	"house-of-gulmohar/internal/utils/types"
 	"time"
 )
 
 type ProductDto struct {
 	Id                string             `json:"id"`
 	Name              string             `json:"name"`
-	Description       utils.NullString   `json:"description"`
+	Description       types.NullString   `json:"description"`
 	Quantity          int64              `json:"quantity"`
 	Featured          bool               `json:"featured"`
 	MRP               float64            `json:"mrp"`
@@ -36,4 +36,15 @@ type ProductCategoryDto struct {
 	Id       string `json:"id"`
 	Name     string `json:"name"`
 	ImageUrl string `json:"image_url"`
+}
+
+type GetAllProductsDto struct {
+	Limit    int
+	Offset   int
+	Category string
+	Brand    string
+}
+
+type GetProductDto struct {
+	Id string
 }

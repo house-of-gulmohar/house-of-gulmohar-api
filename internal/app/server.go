@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"database/sql"
+	"house-of-gulmohar/internal/api/product"
+	productQuery "house-of-gulmohar/internal/api/product/query"
 	"house-of-gulmohar/internal/data"
 	"house-of-gulmohar/internal/data/query"
 	"net/http"
@@ -31,7 +33,7 @@ type Config struct {
 // Server is the top level recruitment server application object.
 type Server struct {
 	*Config
-	Product  ProductHandler
+	Product  product.ProductHandler
 	Category CategoryHandler
 }
 
@@ -39,8 +41,10 @@ func NewServer(c *Config) *Server {
 	s := &Server{
 		Config: c,
 
-		Product: ProductHandler{
-			ProductRepo: &data.ProductDb{Pool: c.Pool, Query: query.ProductQuery{}},
+		Product: product.ProductHandler{
+			ProductService: &product.ProductService{
+				ProductRepo: &product.ProductDb{Pool: c.Pool, Query: productQuery.ProductQuery{}},
+			},
 		},
 		Category: CategoryHandler{
 			CategoryRepo: &data.CategoryDb{Pool: c.Pool, Query: query.CategoryQuery{}},

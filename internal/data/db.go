@@ -7,12 +7,6 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-type ProductDb struct {
-	Pool  *pgxpool.Pool
-	Db    *sql.DB
-	Query query.ProductQuery
-}
-
 type CategoryDb struct {
 	Pool  *pgxpool.Pool
 	Db    *sql.DB
