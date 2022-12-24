@@ -25,15 +25,14 @@ func (s *Server) InitRouter() *chi.Mux {
 	r.Route("/api/v1", func(r chi.Router) {
 		// products routs
 		r.Route("/products", func(r chi.Router) {
-			r.Get("/", e.HandleException(s.Product.handleGetAllProducts))
-			r.Get("/{id}", e.HandleException(s.Product.handleGetProduct))
+			r.Get("/", e.HandleException(s.Product.HandleGetAllProducts))
+			r.Get("/{id}", e.HandleException(s.Product.HandleGetProduct))
 		})
 
 		// categories routes
 		r.Route("/categories", func(r chi.Router) {
 			r.Get("/", e.HandleException(s.Category.handleGetAllCategories))
 			r.Get("/{id}", e.HandleException(s.Category.handleGetCategory))
-			r.Get("/{id}/products", e.HandleException(s.Product.handleGetAllProductsByCategory))
 		})
 	})
 	return r

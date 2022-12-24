@@ -1,23 +1,32 @@
-package data
+package product
 
 import (
 	"context"
-	"house-of-gulmohar/internal/model/dto"
+	"database/sql"
+	"house-of-gulmohar/internal/api/product/dto"
+	"house-of-gulmohar/internal/api/product/query"
 
 	"github.com/jackc/pgx/v4"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/sirupsen/logrus"
 )
 
+type ProductDb struct {
+	Pool  *pgxpool.Pool
+	Db    *sql.DB
+	Query query.ProductQuery
+}
+
 type ProductRepo interface {
-	GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error)
-	GetProduct(ctx context.Context, id string) (*dto.ProductDto, error)
+	GetAllProducts(ctx context.Context, params dto.GetAllProductsDto) ([]dto.ProductDto, int, error)
+	GetProduct(ctx context.Context, params dto.GetProductDto) (*dto.ProductDto, error)
 	GetAllProductsByCategory(ctx context.Context, categoryId string, limit int, offset int) ([]dto.ProductDto, int, error)
 }
 
-func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) ([]dto.ProductDto, int, error) {
+func (p *ProductDb) GetAllProducts(ctx context.Context, params dto.GetAllProductsDto) ([]dto.ProductDto, int, error) {
 	defer ctx.Done()
 	products := []dto.ProductDto{}
-	sql, err := p.Query.GetAllProductsQuery(limit, offset)
+	sql, err := p.Query.GetAllProductsQuery(params)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -61,14 +70,14 @@ func (p *ProductDb) GetAllProducts(ctx context.Context, limit int, offset int) (
 	return products, len(products), nil
 }
 
-func (p *ProductDb) GetProduct(ctx context.Context, id string) (*dto.ProductDto, error) {
+func (p *ProductDb) GetProduct(ctx context.Context, params dto.GetProductDto) (*dto.ProductDto, error) {
 	defer ctx.Done()
 	product := dto.ProductDto{}
-	sql, err := p.Query.GetProductQuery(id)
+	sql, err := p.Query.GetProductQuery(params)
 	if err != nil {
 		return nil, err
 	}
-	row := p.Pool.QueryRow(context.Background(), sql, id)
+	row := p.Pool.QueryRow(context.Background(), sql, params.Id)
 	err = row.Scan(
 		&product.Id,
 		&product.Name,

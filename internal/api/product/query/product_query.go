@@ -1,13 +1,15 @@
 package query
 
 import (
+	"house-of-gulmohar/internal/api/product/dto"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/sirupsen/logrus"
 )
 
 type ProductQuery struct{}
 
-func (p *ProductQuery) GetAllProductsQuery(limit int, offset int) (string, error) {
+func (p *ProductQuery) GetAllProductsQuery(params dto.GetAllProductsDto) (string, error) {
 	psql := squirrel.
 		Select(
 			"p.id",
@@ -37,12 +39,12 @@ func (p *ProductQuery) GetAllProductsQuery(limit int, offset int) (string, error
 		InnerJoin("brand as b on p.brand = b.id").
 		InnerJoin("category as c on p.category = c.id").
 		Where("p.active = true")
-	if limit > 0 {
-		psql.
-			Limit(uint64(limit))
+	if params.Limit > 0 {
+		psql = psql.
+			Limit(uint64(params.Limit))
 	}
-	if offset > 0 {
-		psql.Offset(uint64(offset))
+	if params.Offset > 0 {
+		psql = psql.Offset(uint64(params.Offset))
 	}
 
 	query, _, err := psql.ToSql()
@@ -53,7 +55,7 @@ func (p *ProductQuery) GetAllProductsQuery(limit int, offset int) (string, error
 	return query, nil
 }
 
-func (p *ProductQuery) GetProductQuery(id string) (string, error) {
+func (p *ProductQuery) GetProductQuery(params dto.GetProductDto) (string, error) {
 	psql := squirrel.Select(
 		"p.id",
 		"p.name",
@@ -82,7 +84,7 @@ func (p *ProductQuery) GetProductQuery(id string) (string, error) {
 		InnerJoin("brand as b on p.brand = b.id").
 		InnerJoin("category as c on p.category = c.id").
 		Where("p.active = true").
-		Where(squirrel.Eq{"p.id": id}).PlaceholderFormat(squirrel.Dollar)
+		Where(squirrel.Eq{"p.id": params.Id}).PlaceholderFormat(squirrel.Dollar)
 
 	query, _, err := psql.ToSql()
 	if err != nil {
