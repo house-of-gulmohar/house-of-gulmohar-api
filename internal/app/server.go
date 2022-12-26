@@ -3,10 +3,10 @@ package app
 import (
 	"context"
 	"database/sql"
+	"house-of-gulmohar/internal/api/category"
+	categoryQuery "house-of-gulmohar/internal/api/category/query"
 	"house-of-gulmohar/internal/api/product"
 	productQuery "house-of-gulmohar/internal/api/product/query"
-	"house-of-gulmohar/internal/data"
-	"house-of-gulmohar/internal/data/query"
 	"net/http"
 	"os"
 	"os/signal"
@@ -34,7 +34,7 @@ type Config struct {
 type Server struct {
 	*Config
 	Product  product.ProductHandler
-	Category CategoryHandler
+	Category category.CategoryHandler
 }
 
 func NewServer(c *Config) *Server {
@@ -46,8 +46,10 @@ func NewServer(c *Config) *Server {
 				ProductRepo: &product.ProductDb{Pool: c.Pool, Query: productQuery.ProductQuery{}},
 			},
 		},
-		Category: CategoryHandler{
-			CategoryRepo: &data.CategoryDb{Pool: c.Pool, Query: query.CategoryQuery{}},
+		Category: category.CategoryHandler{
+			CategoryService: &category.CategoryService{
+				CategoryRepo: &category.CategoryDb{Pool: c.Pool, Query: categoryQuery.CategoryQuery{}},
+			},
 		},
 	}
 	return s
