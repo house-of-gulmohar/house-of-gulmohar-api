@@ -32,7 +32,7 @@ func (s *Server) InitRouter() *chi.Mux {
 		// categories routes
 		r.Route("/categories", func(r chi.Router) {
 			r.Get("/", e.HandleException(s.Category.HandleGetAllCategories))
-			// r.Get("/{id}", e.HandleException(s.Category.handleGetCategory))
+			r.Get("/{id}", e.HandleException(s.Category.HandleGetCategory))
 		})
 	})
 	return r

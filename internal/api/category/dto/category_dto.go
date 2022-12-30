@@ -18,3 +18,7 @@ type GetAllCategoriesDto struct {
 	Limit  int
 	Offset int
 }
+
+type GetCategoryDto struct {
+	Id string
+}

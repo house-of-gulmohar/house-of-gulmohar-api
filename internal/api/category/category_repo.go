@@ -19,7 +19,7 @@ type CategoryDb struct {
 
 type CategoryRepo interface {
 	GetAllCategories(ctx context.Context, params dto.GetAllCategoriesDto) ([]dto.CategoryDto, int, error)
-	GetCategory(ctx context.Context, id string) (*dto.CategoryDto, error)
+	GetCategory(ctx context.Context, params dto.GetCategoryDto) (*dto.CategoryDto, error)
 }
 
 func (c *CategoryDb) GetAllCategories(ctx context.Context, params dto.GetAllCategoriesDto) ([]dto.CategoryDto, int, error) {
@@ -53,10 +53,10 @@ func (c *CategoryDb) GetAllCategories(ctx context.Context, params dto.GetAllCate
 	return categories, len(categories), nil
 }
 
-func (c *CategoryDb) GetCategory(ctx context.Context, id string) (*dto.CategoryDto, error) {
+func (c *CategoryDb) GetCategory(ctx context.Context, params dto.GetCategoryDto) (*dto.CategoryDto, error) {
 	defer ctx.Done()
 	category := dto.CategoryDto{}
-	sql, args, err := c.Query.GetCategoryQuery(id)
+	sql, args, err := c.Query.GetCategoryQuery(params)
 	if err != nil {
 		return nil, err
 	}

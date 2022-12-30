@@ -36,7 +36,7 @@ func (c *CategoryQuery) GetAllCategoriesQuery(params dto.GetAllCategoriesDto) (s
 	return query, args, nil
 }
 
-func (c *CategoryQuery) GetCategoryQuery(id string) (string, []interface{}, error) {
+func (c *CategoryQuery) GetCategoryQuery(params dto.GetCategoryDto) (string, []interface{}, error) {
 	psql := squirrel.Select(
 		"c.id",
 		"c.name",
@@ -46,7 +46,7 @@ func (c *CategoryQuery) GetCategoryQuery(id string) (string, []interface{}, erro
 		"c.updated_at",
 	).
 		From("category as c").
-		Where(squirrel.Eq{"c.id": id}).PlaceholderFormat(squirrel.Dollar)
+		Where(squirrel.Eq{"c.id": params.Id}).PlaceholderFormat(squirrel.Dollar)
 
 	query, args, err := psql.ToSql()
 

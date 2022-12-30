@@ -83,10 +83,10 @@ func (p *ProductQuery) GetProductQuery(params dto.GetProductDto) (string, error)
 		"p.featured",
 		"b.id",
 		"b.name",
+		"b.image_url",
 		"c.id",
 		"c.name",
 		"c.image_url",
-		"b.image_url",
 	).
 		From("product as p").
 		InnerJoin("brand as b on p.brand = b.id").
